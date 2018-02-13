@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('thamizarivial-mugam App', () => {
+describe('thamizariviyal-mugam App', () => {
   let page: AppPage;
 
   beforeEach(() => {
