@@ -11,14 +11,6 @@ node {
         bat './gradlew.bat clean build'
     }
 
-    stage 'test'
-    if (isUnix()) {
-        sh './gradlew test'
-    } else {
-        bat './gradlew.bat test'
-    }
-    step([$class: 'JUnitResultArchiver', testResults: '**/target/test-results/TEST-*.xml'])
-
     stage 'package'
     if (isUnix()) {
         sh './gradlew bootRepackage'
@@ -26,11 +18,18 @@ node {
         bat './gradlew.bat bootRepackage'
     }
     step([$class: 'ArtifactArchiver', artifacts: '**/build/libs/*.war', fingerprint: true])
-
-    stage: 'postbuild'
+        
+    stage 'postbuild'
     if (isUnix()) {
         sh 'ls -la'
     } else {
         bat 'dir'
+    }
+    
+    stage 'deploy'
+    if (isUnix()) {
+        echo 'Unix'   
+    } else {
+        bat jboss-cli --connect --controller=${controller} --user=${as_user} --password=${as_password} --command="deploy ./build/libs/${artifact}-${version}.${packaging} --server-groups=${server_group}"
     }
 }
